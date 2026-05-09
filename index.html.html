@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pesquisa de Mercado — AURA Tremembé</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C8972A;
+    --gold-light: #e0b84a;
+    --dark: #0D0D0D;
+    --dark-2: #141414;
+    --dark-3: #1c1c1c;
+    --dark-4: #242424;
+    --off-white: #F0EDE8;
+    --muted: #888;
+    --border: rgba(200,151,42,0.25);
+    --border-active: rgba(200,151,42,0.7);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--dark);
+    color: var(--off-white);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  .header {
+    padding: 2.5rem 2rem 2rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, #0a0a0a 0%, var(--dark) 100%);
+  }
+  .brand {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.35em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.4rem;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+  }
+  .logo span { color: var(--gold); font-weight: 500; }
+  .header-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--muted);
+    margin-top: 0.4rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* PROGRESS */
+  .progress-wrap {
+    max-width: 640px;
+    margin: 2rem auto 0;
+    padding: 0 1.5rem;
+  }
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .progress-bar {
+    height: 2px;
+    background: var(--dark-4);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    border-radius: 2px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* MAIN */
+  .main {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* STEP */
+  .step {
+    display: none;
+    animation: fadeSlide 0.4s ease forwards;
+  }
+  .step.active { display: block; }
+
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .step-num {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+  }
+  .step-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.65rem;
+    font-weight: 400;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+    color: var(--off-white);
+  }
+  .step-title em { font-style: italic; color: var(--gold); }
+  .step-desc {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-bottom: 1.8rem;
+    line-height: 1.7;
+  }
+
+  /* OPTIONS — CARDS */
+  .options { display: flex; flex-direction: column; gap: 0.65rem; }
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    cursor: pointer;
+    background: var(--dark-2);
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .option:hover { border-color: var(--border-active); background: var(--dark-3); }
+  .option.selected {
+    border-color: var(--gold);
+    background: rgba(200,151,42,0.07);
+  }
+  .option-radio {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    border: 1.5px solid var(--muted);
+    flex-shrink: 0;
+    margin-top: 2px;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+  .option.selected .option-radio {
+    border-color: var(--gold);
+  }
+  .option.selected .option-radio::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+  .option-text { flex: 1; }
+  .option-label {
+    font-size: 0.88rem;
+    font-weight: 400;
+    color: var(--off-white);
+    display: block;
+    line-height: 1.4;
+  }
+  .option-sub {
+    font-size: 0.75rem;
+    color: var(--muted);
+    display: block;
+    margin-top: 0.2rem;
+    line-height: 1.5;
+  }
+
+  /* OPTIONS — MULTI */
+  .option .option-check {
+    width: 16px; height: 16px;
+    border-radius: 2px;
+    border: 1.5px solid var(--muted);
+    flex-shrink: 0;
+    margin-top: 2px;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+  .option.selected .option-check {
+    border-color: var(--gold);
+    background: var(--gold);
+  }
+  .option.selected .option-check::after {
+    content: '';
+    position: absolute;
+    top: 2px; left: 4px;
+    width: 5px; height: 8px;
+    border: 2px solid var(--dark);
+    border-top: none; border-left: none;
+    transform: rotate(45deg);
+  }
+
+  /* RANGE SLIDER */
+  .range-wrap { margin-top: 0.5rem; }
+  .range-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-bottom: 0.6rem;
+    letter-spacing: 0.05em;
+  }
+  .range-value {
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
+  }
+  input[type=range] {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 2px;
+    background: var(--dark-4);
+    border-radius: 2px;
+    outline: none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--gold);
+    cursor: pointer;
+    border: 3px solid var(--dark);
+    box-shadow: 0 0 0 1px var(--gold);
+  }
+
+  /* TEXT INPUT */
+  .text-input {
+    width: 100%;
+    background: var(--dark-2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.85rem 1rem;
+    color: var(--off-white);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 300;
+    outline: none;
+    transition: border-color 0.2s;
+    resize: none;
+  }
+  .text-input:focus { border-color: var(--border-active); }
+  .text-input::placeholder { color: var(--muted); }
+
+  /* GRID 2-COL OPTIONS */
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.65rem;
+  }
+  .options-grid .option { flex-direction: column; gap: 0.4rem; }
+  .options-grid .option-radio,
+  .options-grid .option-check { margin: 0; }
+
+  /* NAVIGATION */
+  .nav {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+  .btn {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.8rem 1.8rem;
+    border-radius: 2px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: var(--gold);
+    color: var(--dark);
+  }
+  .btn-primary:hover { background: var(--gold-light); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--dark-4);
+  }
+  .btn-secondary:hover { color: var(--off-white); border-color: var(--muted); }
+
+  /* DIVIDER */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 1.5rem 0;
+  }
+
+  /* THANKS */
+  .thanks {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+  .thanks-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: var(--gold);
+  }
+  .thanks h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 300;
+    margin-bottom: 0.7rem;
+  }
+  .thanks p { font-size: 0.85rem; color: var(--muted); line-height: 1.8; }
+
+  /* SECTION BADGE */
+  .section-badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid var(--border);
+    padding: 0.2rem 0.6rem;
+    border-radius: 2px;
+    margin-bottom: 1.5rem;
+  }
+
+  /* NOTA DE PRIVACIDADE */
+  .privacy-note {
+    font-size: 0.72rem;
+    color: #555;
+    text-align: center;
+    margin-top: 3rem;
+    line-height: 1.7;
+    border-top: 1px solid var(--dark-4);
+    padding-top: 1.5rem;
+  }
+
+  @media (max-width: 480px) {
+    .options-grid { grid-template-columns: 1fr; }
+    .logo { font-size: 1.9rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand">Pesquisa de Mercado</div>
+  <div class="logo"><span>AURA</span> Tremembé</div>
+  <div class="header-sub">Novo empreendimento residencial · Zona Norte, São Paulo</div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-label">
+    <span id="progress-text">Pergunta 1 de 12</span>
+    <span id="progress-pct">8%</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:8%"></div></div>
+</div>
+
+<div class="main">
+
+  <!-- STEP 0 — INTRO / CONVITE -->
+  <div class="step active" id="step-0">
+    <div style="text-align:center; padding: 1.5rem 0 0.5rem;">
+      <div style="font-family:'Cormorant Garamond',serif; font-size:0.7rem; letter-spacing:0.3em; color:var(--muted); text-transform:uppercase; margin-bottom:1.8rem;">Zona Norte · São Paulo</div>
+      <div style="width:40px; height:1px; background:var(--gold); margin:0 auto 1.8rem;"></div>
+      <h1 style="font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:300; line-height:1.35; margin-bottom:1.2rem; color:var(--off-white);">
+        Você mora, trabalha ou <em style="color:var(--gold); font-style:italic;">investe</em><br>na Zona Norte de São Paulo?
+      </h1>
+      <p style="font-size:0.85rem; color:var(--muted); line-height:1.9; max-width:420px; margin:0 auto 0.8rem;">
+        Estamos desenvolvendo um novo empreendimento residencial no bairro do Tremembé e gostaríamos de ouvir sua opinião antes de qualquer decisão.
+      </p>
+      <p style="font-size:0.85rem; color:var(--muted); line-height:1.9; max-width:420px; margin:0 auto 2rem;">
+        São <strong style="color:var(--off-white); font-weight:400;">12 perguntas rápidas</strong> — menos de 3 minutos. Sem compromisso, sem cadastro.
+      </p>
+      <button class="btn btn-primary" style="font-size:0.82rem; padding:0.9rem 2.5rem;" onclick="startSurvey()">Quero participar</button>
+      <p style="font-size:0.7rem; color:#444; margin-top:1.2rem; line-height:1.7;">
+        Suas respostas são anônimas e usadas exclusivamente<br>para orientar o desenvolvimento do projeto.
+      </p>
+    </div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step" id="step-1">
+    <div class="section-badge">Perfil</div>
+    <div class="step-num">01 / 12</div>
+    <div class="step-title">Qual é a sua <em>relação com imóveis</em>?</div>
+    <div class="step-desc">Selecione a opção que melhor descreve você.</div>
+    <div class="options" data-type="single" data-name="perfil">
+      <div class="option" data-value="investidor_exp">
+        <div class="option-radio"></div>
+        <div class="option-text">
+          <span class="option-label">Investidor imobiliário</span>
+          <span class="option-sub">Já tenho ou busco imóveis como investimento</span>
+        </div>
+      </div>
+      <div class="option" data-value="comprador_moradia">
+        <div class="option-radio"></div>
+        <div class="option-text">
+          <span class="option-label">Comprador para moradia</span>
+          <span class="option-sub">Busco imóvel para morar</span>
+        </div>
+      </div>
+      <div class="option" data-value="ambos">
+        <div class="option-radio"></div>
+        <div class="option-text">
+          <span class="option-label">Ambos</span>
+          <span class="option-sub">Avaliaria tanto para morar quanto para investir</span>
+        </div>
+      </div>
+      <div class="option" data-value="nao_comprador">
+        <div class="option-radio"></div>
+        <div class="option-text">
+          <span class="option-label">Ainda não sou comprador</span>
+          <span class="option-sub">Estou em fase de pesquisa / planejamento futuro</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav"><button class="btn btn-primary" onclick="next(1)">Continuar</button></div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step" id="step-2">
+    <div class="section-badge">Perfil</div>
+    <div class="step-num">02 / 12</div>
+    <div class="step-title">Em qual <em>faixa de renda familiar</em> você se enquadra?</div>
+    <div class="step-desc">Informação confidencial, usada apenas para segmentação.</div>
+    <div class="options" data-type="single" data-name="renda">
+      <div class="option" data-value="ate5">
+        <div class="option-radio"></div>
+        <div class="option-text"><span class="option-label">Até R$ 5.000 / mês</span></div>
+      </div>
+      <div class="option" data-value="5a10">
+        <div class="option-radio"></div>
+        <div class="option-text"><span class="option-label">R$ 5.000 – R$ 10.000 / mês</span></div>
+      </div>
+      <div class="option" data-value="10a20">
+        <div class="option-radio"></div>
+        <div class="option-text"><span class="option-label">R$ 10.000 – R$ 20.000 / mês</span></div>
+      </div>
+      <div class="option" data-value="acima20">
+        <div class="option-radio"></div>
+        <div class="option-text"><span class="option-label">Acima de R$ 20.000 / mês</span></div>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="btn btn-secondary" onclick="back(2)">Voltar</button>
+      <button class="btn btn-primary" onclick="next(2)">Continuar</button>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step" id="step-3">
+    <div class="section-badge">Localização</div>
+    <div class="step-num">03 / 12</div>
+    <div class="step-title">Você <em>mora ou trabalha</em> na Zona Norte de São Paulo?</div>
+    <div class="step-desc">Tremembé, Jaçanã, Horto Florestal, Pedra Branca e adjacências.</div>
+    <div class="options" data-type="single" data-name="zona_norte">
+      <div class="option" data-value="mora_zn">
+        <div class="option-radio"></div>
+        <div class="option-text"><span class="option-label">Sim, moro na Zona Norte</span></div>
+      </div>
+      <div class="option" data-value="trabalha_zn">
+        <div class="option-radio"></div>
+        <div class="option-text"><span class="option-label">Sim, trabalho na Zona Norte</span></div>
+      </div>
+      <div class="option" data-value="mora_trabalha_zn">
+        <div class="option-radio"></div>
+        <div class="option-text"><span class="option-label">Moro e trabalho na Zona Norte</span></div>
+      </div>
+      <div class="option" data-value="outra_regiao">
+        <div class="option-radio"></div>
+        <div class="option-text">
+          <span class="option-label">Não, moro/trabalho em outra região</span>
+          <span class="option-sub">Mas teria interesse em investir ou morar na ZN</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="btn btn-secondary" onclick="back(3)">Voltar</button>
+      <button class="btn btn-primary" onclick="next(3)">Continuar</button>
+    </div>
+  </div>
+
+  <!-- STEP 4 — PRODUTO A vs B -->
+  <div class="step" id="step-4">
+    <div class="section-badge">Produto</div>
+    <div class="step-num">04 / 12</div>
+    <div class="step-title">Apresentamos dois tipos de <em>empreendimento residencial</em>.<br>Qual desperta mais interesse?</div>
+    <div class="step-desc">Ambos em condomínio fechado, Zona Norte de São Paulo, com entrega prevista para 2028.</div>
+    <div class="options" data-type="single" data-name="produto_preferencia">
+      <div class="option" data-value="sobrado">
+        <div class="option-radio"></div>
+        <div class="option-text">
+          <span class="option-label">Sobrado / Casa em condomínio · 129 m²</span>
+          <span class="option-sub">3 dormitórios · 2 vagas · Área privativa com quintal · Condomínio horizontal</span>
+        </div>
+      </div>
+      <div class="option" data-value="studio_compacto">
+        <div class="option-radio"></div>
+        <div class="option-text">
+          <span class="option-label">Apartamento · ~34 m²</span>
+          <span class="option-sub">2 dormitórios · Unidades com e sem vaga · Lazer · Condomínio vertical</span>
+        </div>
+      </div>
+      <div class="option" data-value="indiferente">
+        <div class="option-radio"></div>
+        <div class="option-text">
+          <span class="option-label">Depende do preço / condições</span>
+        </div>
+      </div>
+      <div class="option" data-value="nenhum">
+        <div class="option-radio"></div>
+        <div class="option-text">
+          <span class="option-label">Nenhum dos dois me interessa</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="btn btn-secondary" onclick="back(4)">Voltar</button>
+      <button class="btn btn-primary" onclick="next(4)">Continuar</button>
+    </div>
+  </div>
+
+  <!-- STEP 5 — MOTIVO DA PREFERÊNCIA -->
+  <div class="step" id="step-5">
+    <div class="section-badge">Produto</div>
+    <div class="step-num">05 / 12</div>
+    <div class="step-title">O que <em>mais influencia</em> sua preferência de tipologia?</div>
+    <div class="step-desc">Selecione até 2 fatores principais.</div>
+    <div class="options" data-type="multi" data-name="fator_tipologia" data-max="2">
+      <div class="option" data-value="espaco_familia">
+        <div class="option-check"></div>
+        <div class="option-text"><span class="option-label">Espaço para a família / filhos</span></div>
+      </div>
+      <div class="option" data-value="rentabilidade">
+        <div class="option-check"></div>
+        <div class="option-text"><span class="option-label">Maior rentabilidade como investimento</span></div>
+      </div>
+      <div class="option" data-value="ticket_acessivel">
+        <div class="option-check"></div>
+        <div class="option-text"><span class="option-label">Ticket de entrada mais acessível</span></div>
+      </div>
+      <div class="option" data-value="privacidade">
+        <div class="option-check"></div>
+        <div class="option-text"><span class="option-label">Privacidade / área exclusiva</span></div>
+      </div>
+      <div class="option" data-value="facilidade_locacao">
+        <div class="option-check"></div>
+        <div class="option-text">
+          <span class="option-label">Facilidade de locação / liquidez</span>
+          <span class="option-sub">Airbnb, aluguel de longo prazo</span>
+        </div>
+      </div>
+      <div class="option" data-value="custo_manutencao">
+        <div class="option-check"></div>
+        <div class="option-text"><span class="option-label">Menor custo de manutenção / condomínio</span></div>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="btn btn-secondary" onclick="back(5)">Voltar</button>
+      <button class="btn btn-primary" onclick="next(5)">Continuar</button>
+    </div>
+  </div>
+
+  <!-- STEP 6 — TICKET SOBRADO -->
+  <div class="step" id="step-6">
+    <div class="section-badge">Precificação</div>
+    <div class="step-num">06 / 12</div>
+    <div class="step-title">Para o <em>sobrado de 129 m²</em>, qual faixa de preço você consideraria justa?</div>
+    <div class="step-desc">Condomínio horizontal na Zona Norte, 3 dorms, 2 vagas, entrega 2028.</div>
+    <div class="options" data-type="single" data-name="ticket_sobrado">
+      <div class="option" data-value="ate500">
+        <div class="option-radio"></div>
+        <div class="option-text"><span class="option-label">Até R$ 500.000</span></div>
+      </div>
+      <div class="option" data-value="500a700">
+        <div class="option-radio"></div>
+        <div class="option-text"><span class="option-label">R$ 500.000 – R$ 700.000</span></div>
+      </div>
+      <div class="option" data-value="700a900">
+        <div class="option-radio"></div>
+        <div class="option-text"><span class="option-label">R$ 700.000 – R$ 900.000</span></div>
+      </div>
+      <div class="option" data-value="acima900">
+        <div class="option-radio"></div>
+        <div class="option-text"><span class="option-label">Acima de R$ 900.000</span></div>
+      </div>
+      <div class="option" data-value="nao_avaliaria_sobrado">
+        <div class="option-radio"></div>
+        <div class="option-text"><span class="option-label">Não avaliaria esse tipo de produto</span></div>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="btn btn-secondary" onclick="back(6)">Voltar</button>
+      <button class="btn btn-primary" onclick="next(6)">Continuar</button>
+    </div>
+  </div>
+
+  <!-- STEP 7 — TICKET STUDIO -->
+  <div class="step" id="step-7">
+    <div class="section-badge">Precificação</div>
+    <div class="step-num">07 / 12</div>
+    <div class="step-title">Para o <em>apartamento compacto de ~34 m²</em>, qual faixa seria aceitável?</div>
+    <div class="step-desc">Studio ou 1 dorm, Zona Norte, 1 vaga, lazer coletivo, entrega 2028.</div>
+    <div class="options" data-type="single" data-name="ticket_studio">
+      <div class="option" data-value="ate220">
+        <div class="option-radio"></div>
+        <div class="option-text"><span class="option-label">Até R$ 220.000</span></div>
+      </div>
+      <div class="option" data-value="220a280">
+        <div class="option-radio"></div>
+        <div class="option-text"><span class="option-label">R$ 220.000 – R$ 280.000</span></div>
+      </div>
+      <div class="option" data-value="280a350">
+        <div class="option-radio"></div>
+        <div class="option-text"><span class="option-label">R$ 280.000 – R$ 350.000</span></div>
+      </div>
+      <div class="option" data-value="acima350">
+        <div class="option-radio"></div>
+        <div class="option-text"><span class="option-label">Acima de R$ 350.000</span></div>
+      </div>
+      <div class="option" data-value="nao_avaliaria_studio">
+        <div class="option-radio"></div>
+        <div class="option-text"><span class="option-label">Não avaliaria esse tipo de produto</span></div>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="btn btn-secondary" onclick="back(7)">Voltar</button>
+      <button class="btn btn-primary" onclick="next(7)">Continuar</button>
+    </div>
+  </div>
+
+  <!-- STEP 8 — FORMA DE PAGAMENTO -->
+  <div class="step" id="step-8">
+    <div class="section-badge">Financeiro</div>
+    <div class="step-num">08 / 12</div>
+    <div class="step-title">Como você <em>prefere adquirir</em> um imóvel na planta?</div>
+    <div class="options" data-type="single" data-name="forma_pagamento">
+      <div class="option" data-value="pgto_obra">
+        <div class="option-radio"></div>
+        <div class="option-text">
+          <span class="option-label">Parcelas durante a obra, sem financiamento na entrega</span>
+          <span class="option-sub">Entrada + parcelas mensais até a chave</span>
+        </div>
+      </div>
+      <div class="option" data-value="financiamento_entrega">
+        <div class="option-radio"></div>
+        <div class="option-text">
+          <span class="option-label">Entrada reduzida + financiamento bancário na entrega</span>
+          <span class="option-sub">CEF, Bradesco, Itaú, Santander etc.</span>
+        </div>
+      </div>
+      <div class="option" data-value="avista">
+        <div class="option-radio"></div>
+        <div class="option-text"><span class="option-label">À vista ou com poucos pagamentos</span></div>
+      </div>
+      <div class="option" data-value="flexivel">
+        <div class="option-radio"></div>
+        <div class="option-text"><span class="option-label">Dependeria das condições oferecidas</span></div>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="btn btn-secondary" onclick="back(8)">Voltar</button>
+      <button class="btn btn-primary" onclick="next(8)">Continuar</button>
+    </div>
+  </div>
+
+  <!-- STEP 9 — ATRIBUTOS DO CONDOMÍNIO -->
+  <div class="step" id="step-9">
+    <div class="section-badge">Produto</div>
+    <div class="step-num">09 / 12</div>
+    <div class="step-title">Quais <em>atributos do condomínio</em> são mais importantes para você?</div>
+    <div class="step-desc">Selecione até 3 itens.</div>
+    <div class="options" data-type="multi" data-name="atributos" data-max="3">
+      <div class="option" data-value="seguranca">
+        <div class="option-check"></div>
+        <div class="option-text"><span class="option-label">Segurança / portaria 24h</span></div>
+      </div>
+      <div class="option" data-value="vaga">
+        <div class="option-check"></div>
+        <div class="option-text"><span class="option-label">Vaga de garagem coberta</span></div>
+      </div>
+      <div class="option" data-value="area_verde">
+        <div class="option-check"></div>
+        <div class="option-text"><span class="option-label">Área verde / paisagismo</span></div>
+      </div>
+      <div class="option" data-value="lazer">
+        <div class="option-check"></div>
+        <div class="option-text"><span class="option-label">Lazer (piscina, academia, salão)</span></div>
+      </div>
+      <div class="option" data-value="pet_friendly">
+        <div class="option-check"></div>
+        <div class="option-text"><span class="option-label">Pet friendly</span></div>
+      </div>
+      <div class="option" data-value="baixo_condominio">
+        <div class="option-check"></div>
+        <div class="option-text"><span class="option-label">Condomínio baixo / poucos itens de custo fixo</span></div>
+      </div>
+      <div class="option" data-value="acabamento">
+        <div class="option-check"></div>
+        <div class="option-text"><span class="option-label">Acabamento / padrão construtivo elevado</span></div>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="btn btn-secondary" onclick="back(9)">Voltar</button>
+      <button class="btn btn-primary" onclick="next(9)">Continuar</button>
+    </div>
+  </div>
+
+  <!-- STEP 10 — INTENÇÃO DE COMPRA -->
+  <div class="step" id="step-10">
+    <div class="section-badge">Intenção</div>
+    <div class="step-num">10 / 12</div>
+    <div class="step-title">Se um empreendimento com esse perfil fosse lançado na <em>Zona Norte em 2026/2027</em>, você:</div>
+    <div class="options" data-type="single" data-name="intencao_compra">
+      <div class="option" data-value="compraria_certeza">
+        <div class="option-radio"></div>
+        <div class="option-text"><span class="option-label">Compraria — tenho interesse concreto</span></div>
+      </div>
+      <div class="option" data-value="provavelmente">
+        <div class="option-radio"></div>
+        <div class="option-text"><span class="option-label">Provavelmente compraria, dependendo do preço</span></div>
+      </div>
+      <div class="option" data-value="talvez">
+        <div class="option-radio"></div>
+        <div class="option-text"><span class="option-label">Talvez — precisaria ver mais detalhes</span></div>
+      </div>
+      <div class="option" data-value="nao_compraria">
+        <div class="option-radio"></div>
+        <div class="option-text"><span class="option-label">Provavelmente não compraria</span></div>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="btn btn-secondary" onclick="back(10)">Voltar</button>
+      <button class="btn btn-primary" onclick="next(10)">Continuar</button>
+    </div>
+  </div>
+
+  <!-- STEP 11 — HORIZONTE -->
+  <div class="step" id="step-11">
+    <div class="section-badge">Intenção</div>
+    <div class="step-num">11 / 12</div>
+    <div class="step-title">Qual é o seu <em>horizonte de compra</em> de imóvel?</div>
+    <div class="options" data-type="single" data-name="horizonte">
+      <div class="option" data-value="imediato">
+        <div class="option-radio"></div>
+        <div class="option-text"><span class="option-label">Nos próximos 6 meses</span></div>
+      </div>
+      <div class="option" data-value="ate1ano">
+        <div class="option-radio"></div>
+        <div class="option-text"><span class="option-label">Entre 6 meses e 1 ano</span></div>
+      </div>
+      <div class="option" data-value="1a2anos">
+        <div class="option-radio"></div>
+        <div class="option-text"><span class="option-label">Entre 1 e 2 anos</span></div>
+      </div>
+      <div class="option" data-value="mais2anos">
+        <div class="option-radio"></div>
+        <div class="option-text"><span class="option-label">Mais de 2 anos / ainda indefinido</span></div>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="btn btn-secondary" onclick="back(11)">Voltar</button>
+      <button class="btn btn-primary" onclick="next(11)">Continuar</button>
+    </div>
+  </div>
+
+  <!-- STEP 12 — COMENTÁRIO LIVRE -->
+  <div class="step" id="step-12">
+    <div class="section-badge">Comentário</div>
+    <div class="step-num">12 / 12</div>
+    <div class="step-title">Alguma <em>observação ou sugestão</em> para o projeto?</div>
+    <div class="step-desc">Campo livre e opcional. O que mais importa para você em um novo empreendimento na Zona Norte?</div>
+    <textarea class="text-input" id="comentario" rows="4" placeholder="Escreva aqui (opcional)..."></textarea>
+    <div class="nav">
+      <button class="btn btn-secondary" onclick="back(12)">Voltar</button>
+      <button class="btn btn-primary" onclick="finish()">Enviar pesquisa</button>
+    </div>
+  </div>
+
+  <!-- THANKS -->
+  <div class="step" id="step-thanks">
+    <div class="thanks">
+      <div class="thanks-icon">◆</div>
+      <h2>Obrigado pela sua participação.</h2>
+      <p>Suas respostas são confidenciais e serão usadas exclusivamente<br>para orientar o desenvolvimento do AURA Tremembé.<br><br>
+      Caso tenha interesse em acompanhar o projeto,<br>entre em contato com a equipe AURA.</p>
+      <hr class="divider" style="margin-top:2rem">
+      <p style="font-size:0.75rem;color:#444;margin-top:1rem;">AURA Tremembé · Zona Norte, São Paulo<br>Empreendimento em desenvolvimento. AURA DiMob.</p>
+    </div>
+  </div>
+
+  <div class="privacy-note" id="privacy-note">
+    Pesquisa confidencial · As respostas são anônimas e utilizadas exclusivamente para fins de inteligência de produto.<br>
+    Nenhum dado pessoal é coletado sem consentimento explícito.
+  </div>
+
+</div>
+
+<script>
+  const TOTAL = 12;
+  let current = 0;
+  const answers = {};
+
+  // Ocultar progress na intro
+  document.querySelector('.progress-wrap').style.display = 'none';
+
+  function startSurvey() {
+    current = 1;
+    document.querySelector('.progress-wrap').style.display = 'block';
+    updateProgress(1);
+    showStep(1);
+  }
+
+  function updateProgress(step) {
+    const pct = Math.round((step / TOTAL) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-text').textContent = step <= TOTAL ? `Pergunta ${step} de ${TOTAL}` : 'Concluído';
+    document.getElementById('progress-pct').textContent = pct + '%';
+  }
+
+  function showStep(n) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    const el = document.getElementById(n <= TOTAL ? `step-${n}` : 'step-thanks');
+    if (el) el.classList.add('active');
+    if (n > TOTAL) {
+      document.getElementById('privacy-note').style.display = 'none';
+      document.querySelector('.progress-wrap').style.display = 'none';
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function getSelected(stepEl) {
+    const type = stepEl.querySelector('[data-type]')?.dataset.type;
+    if (type === 'single') {
+      const sel = stepEl.querySelector('.option.selected');
+      return sel ? sel.dataset.value : null;
+    } else if (type === 'multi') {
+      return [...stepEl.querySelectorAll('.option.selected')].map(o => o.dataset.value);
+    }
+    return null;
+  }
+
+  function next(step) {
+    const stepEl = document.getElementById(`step-${step}`);
+    const group = stepEl.querySelector('[data-type]');
+    if (group) {
+      const val = getSelected(stepEl);
+      const isEmpty = !val || (Array.isArray(val) && val.length === 0);
+      if (isEmpty) {
+        group.style.outline = '1px solid rgba(200,151,42,0.5)';
+        group.style.borderRadius = '4px';
+        setTimeout(() => { group.style.outline = ''; }, 1000);
+        return;
+      }
+      answers[group.dataset.name] = val;
+    }
+    current = step + 1;
+    updateProgress(current);
+    showStep(current);
+  }
+
+  function back(step) {
+    current = step - 1;
+    updateProgress(current);
+    showStep(current);
+  }
+
+  const FORMSPREE_URL = 'https://formspree.io/f/mqengkkz';
+
+  async function finish() {
+    const comentario = document.getElementById('comentario').value;
+    if (comentario) answers['comentario'] = comentario;
+    answers['timestamp'] = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+
+    const btn = document.querySelector('#step-12 .btn-primary');
+    btn.textContent = 'Enviando...';
+    btn.disabled = true;
+
+    try {
+      await fetch(FORMSPREE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(answers)
+      });
+    } catch (e) {
+      console.warn('Erro ao enviar:', e);
+    }
+
+    updateProgress(TOTAL + 1);
+    showStep(TOTAL + 1);
+  }
+
+  // Click handlers
+  document.querySelectorAll('.options[data-type="single"] .option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      const group = opt.closest('.options');
+      group.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+    });
+  });
+
+  document.querySelectorAll('.options[data-type="multi"] .option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      const group = opt.closest('.options');
+      const max = parseInt(group.dataset.max || 99);
+      const selected = group.querySelectorAll('.option.selected');
+      if (opt.classList.contains('selected')) {
+        opt.classList.remove('selected');
+      } else if (selected.length < max) {
+        opt.classList.add('selected');
+      }
+    });
+  });
+</script>
+</body>
+</html>
