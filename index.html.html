@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AURA Tremembé — Pesquisa de Produto</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,500&family=Jost:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold: #C8972A;
+    --gold-light: #E0B84A;
+    --gold-dim: rgba(200,151,42,0.12);
+    --gold-border: rgba(200,151,42,0.25);
+    --dark: #0A0A0A;
+    --dark-2: #111111;
+    --dark-3: #181818;
+    --dark-4: #202020;
+    --off-white: #F0EDE8;
+    --muted: #6a6560;
+    --muted-light: #9a948e;
+    --danger: #e05c5c;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--dark);
+    color: var(--off-white);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 1rem 4rem;
+  }
+
+  /* ── HEADER ── */
+  .page-header {
+    width: 100%;
+    max-width: 560px;
+    padding: 3rem 0 2.5rem;
+    text-align: center;
+  }
+
+  .header-eyebrow {
+    font-size: 0.6rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+
+  .header-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    color: var(--off-white);
+    margin-bottom: 0.5rem;
+  }
+
+  .header-logo span { color: var(--gold); font-weight: 500; }
+
+  .header-tagline {
+    font-size: 0.75rem;
+    font-weight: 300;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    line-height: 1.7;
+  }
+
+  .header-divider {
+    width: 40px;
+    height: 1px;
+    background: var(--gold-border);
+    margin: 1.2rem auto 0;
+  }
+
+  /* ── INTRO ── */
+  .intro-box {
+    width: 100%;
+    max-width: 560px;
+    background: var(--dark-3);
+    border: 0.5px solid rgba(200,151,42,0.15);
+    border-left: 3px solid var(--gold);
+    border-radius: 2px;
+    padding: 1rem 1.25rem;
+    font-size: 0.8rem;
+    color: var(--muted-light);
+    line-height: 1.8;
+    margin-bottom: 2rem;
+  }
+
+  /* ── PROGRESS ── */
+  .progress-wrap {
+    width: 100%;
+    max-width: 560px;
+    margin-bottom: 1.75rem;
+  }
+
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .progress-track {
+    height: 2px;
+    background: var(--dark-4);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+
+  /* ── FORM WRAPPER ── */
+  .form-wrap {
+    width: 100%;
+    max-width: 560px;
+  }
+
+  /* ── QUESTION CARD ── */
+  .q-card {
+    background: var(--dark-2);
+    border: 0.5px solid rgba(255,255,255,0.06);
+    border-radius: 4px;
+    padding: 1.5rem;
+    margin-bottom: 12px;
+    display: none;
+    animation: fadeUp 0.25s ease;
+  }
+
+  .q-card.visible { display: block; }
+  .q-card.answered { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-step {
+    font-size: 0.58rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+
+  .q-label {
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: var(--off-white);
+    line-height: 1.5;
+    margin-bottom: 1.1rem;
+  }
+
+  .q-label .optional-tag {
+    font-size: 0.65rem;
+    color: var(--muted);
+    font-weight: 300;
+    margin-left: 6px;
+  }
+
+  /* ── RADIO OPTIONS ── */
+  .options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .opt-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    background: var(--dark-3);
+    border: 0.5px solid rgba(255,255,255,0.07);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    font-size: 0.8rem;
+    color: var(--muted-light);
+    line-height: 1.4;
+  }
+
+  .opt-label:hover {
+    border-color: var(--gold-border);
+    background: var(--dark-4);
+    color: var(--off-white);
+  }
+
+  .opt-label input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 1px solid var(--muted);
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: border-color 0.15s;
+    position: relative;
+  }
+
+  .opt-label input[type="radio"]:checked {
+    border-color: var(--gold);
+    background: var(--gold-dim);
+  }
+
+  .opt-label input[type="radio"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+
+  .opt-label:has(input:checked) {
+    border-color: var(--gold-border);
+    background: var(--gold-dim);
+    color: var(--off-white);
+  }
+
+  /* ── TEXT INPUT ── */
+  .text-input {
+    width: 100%;
+    background: var(--dark-3);
+    border: 0.5px solid rgba(255,255,255,0.08);
+    border-radius: 3px;
+    padding: 12px 14px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 300;
+    color: var(--off-white);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .text-input::placeholder { color: var(--muted); }
+  .text-input:focus { border-color: var(--gold-border); }
+
+  /* ── NEXT BUTTON ── */
+  .btn-next {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 13px;
+    background: var(--gold);
+    border: none;
+    border-radius: 3px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--dark);
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .btn-next:hover { opacity: 0.88; }
+  .btn-next:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .btn-skip {
+    display: block;
+    text-align: center;
+    margin-top: 0.6rem;
+    font-size: 0.7rem;
+    color: var(--muted);
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .btn-skip:hover { color: var(--muted-light); }
+
+  /* ── ANSWERED STATE ── */
+  .q-card.answered .options-list,
+  .q-card.answered .text-input,
+  .q-card.answered .btn-next,
+  .q-card.answered .btn-skip { display: none; }
+
+  .answered-summary {
+    display: none;
+    font-size: 0.75rem;
+    color: var(--gold);
+    margin-top: 0.4rem;
+    padding: 8px 12px;
+    background: var(--gold-dim);
+    border-radius: 3px;
+    border: 0.5px solid var(--gold-border);
+  }
+
+  .q-card.answered .answered-summary { display: block; }
+
+  /* ── SUBMIT SECTION ── */
+  .submit-section {
+    display: none;
+    width: 100%;
+    max-width: 560px;
+    margin-top: 0.5rem;
+  }
+
+  .submit-section.visible { display: block; }
+
+  .submit-note {
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-align: center;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+
+  .btn-submit {
+    width: 100%;
+    padding: 15px;
+    background: var(--gold);
+    border: none;
+    border-radius: 3px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--dark);
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .btn-submit:hover { opacity: 0.88; }
+  .btn-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* ── THANK YOU ── */
+  .thankyou {
+    display: none;
+    width: 100%;
+    max-width: 560px;
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+
+  .thankyou.visible { display: block; }
+
+  .thankyou-icon {
+    width: 48px; height: 48px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 1.2rem;
+    color: var(--gold);
+  }
+
+  .thankyou h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 300;
+    color: var(--off-white);
+    margin-bottom: 0.75rem;
+  }
+
+  .thankyou p {
+    font-size: 0.8rem;
+    color: var(--muted-light);
+    line-height: 1.8;
+    max-width: 380px;
+    margin: 0 auto;
+  }
+
+  /* ── ERROR ── */
+  .error-msg {
+    display: none;
+    font-size: 0.72rem;
+    color: var(--danger);
+    margin-top: 0.5rem;
+    text-align: center;
+  }
+
+  /* ── FOOTER ── */
+  .page-footer {
+    margin-top: 3rem;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="page-header">
+  <div class="header-eyebrow">Pesquisa de produto · Pré-lançamento</div>
+  <div class="header-logo"><span>AURA</span> Tremembé</div>
+  <div class="header-tagline">Zona Norte · São Paulo<br>Novo empreendimento residencial</div>
+  <div class="header-divider"></div>
+</div>
+
+<!-- INTRO -->
+<div class="intro-box">
+  Estamos desenvolvendo um novo empreendimento residencial no Tremembé e queremos ouvir quem conhece a região. São só 5 perguntas, leva menos de 2 minutos. Anônimo e sem cadastro.
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-info">
+    <span id="prog-label">Pergunta 1 de 5</span>
+    <span id="prog-pct">0%</span>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" id="prog-fill" style="width: 0%"></div>
+  </div>
+</div>
+
+<!-- FORMULÁRIO -->
+<div class="form-wrap">
+  <form id="pesquisa-form" action="https://formspree.io/f/mqengkkz" method="POST">
+
+    <!-- Q1: PERFIL -->
+    <div class="q-card visible" id="q1" data-q="1">
+      <div class="q-step">Pergunta 1 de 5</div>
+      <div class="q-label">Qual é o seu perfil em relação a imóveis?</div>
+      <div class="options-list">
+        <label class="opt-label">
+          <input type="radio" name="perfil" value="comprador_moradia">
+          Quero comprar um imóvel para morar
+        </label>
+        <label class="opt-label">
+          <input type="radio" name="perfil" value="investidor">
+          Quero comprar como investimento (renda ou revenda)
+        </label>
+        <label class="opt-label">
+          <input type="radio" name="perfil" value="pesquisando">
+          Ainda estou pesquisando / sem decisão
+        </label>
+      </div>
+      <div class="answered-summary" id="ans1"></div>
+      <button type="button" class="btn-next" onclick="nextQ(1)" disabled>Próxima →</button>
+    </div>
+
+    <!-- Q2: ZONA -->
+    <div class="q-card" id="q2" data-q="2">
+      <div class="q-step">Pergunta 2 de 5</div>
+      <div class="q-label">Você mora ou trabalha em qual região?</div>
+      <div class="options-list">
+        <label class="opt-label">
+          <input type="radio" name="zona_norte" value="tremembe_jacana_horto">
+          Tremembé / Jaçanã / Horto Florestal
+        </label>
+        <label class="opt-label">
+          <input type="radio" name="zona_norte" value="tucuruvi_vmazzei">
+          Tucuruvi / Vila Gustavo / Vila Mazzei
+        </label>
+        <label class="opt-label">
+          <input type="radio" name="zona_norte" value="santana_carandiru">
+          Santana / Carandiru / Casa Verde
+        </label>
+        <label class="opt-label">
+          <input type="radio" name="zona_norte" value="outra_zn">
+          Outra região da Zona Norte
+        </label>
+        <label class="opt-label">
+          <input type="radio" name="zona_norte" value="fora_zn">
+          Fora da Zona Norte
+        </label>
+      </div>
+      <div class="answered-summary" id="ans2"></div>
+      <button type="button" class="btn-next" onclick="nextQ(2)" disabled>Próxima →</button>
+    </div>
+
+    <!-- Q3: PRODUTO -->
+    <div class="q-card" id="q3" data-q="3">
+      <div class="q-step">Pergunta 3 de 5</div>
+      <div class="q-label">Se você fosse comprar um imóvel novo no Tremembé, qual tipo preferiria?</div>
+      <div class="options-list">
+        <label class="opt-label">
+          <input type="radio" name="produto_preferencia" value="sobrado_condominio">
+          Sobrado / casa em condomínio (3 dorms, ~130m², 2 vagas)
+        </label>
+        <label class="opt-label">
+          <input type="radio" name="produto_preferencia" value="studio_compacto">
+          Apartamento compacto com terraço (2 dorms, ~34m²)
+        </label>
+        <label class="opt-label">
+          <input type="radio" name="produto_preferencia" value="preco_decide">
+          Tanto faz — o preço seria o fator decisivo
+        </label>
+        <label class="opt-label">
+          <input type="radio" name="produto_preferencia" value="sem_interesse">
+          Não tenho interesse nesse tipo de produto
+        </label>
+      </div>
+      <div class="answered-summary" id="ans3"></div>
+      <button type="button" class="btn-next" onclick="nextQ(3)" disabled>Próxima →</button>
+    </div>
+
+    <!-- Q4: TICKET -->
+    <div class="q-card" id="q4" data-q="4">
+      <div class="q-step">Pergunta 4 de 5</div>
+      <div class="q-label">Qual faixa de valor você consideraria para esse imóvel?</div>
+      <div class="options-list">
+        <label class="opt-label">
+          <input type="radio" name="ticket" value="ate280k">
+          Até R$ 280 mil
+        </label>
+        <label class="opt-label">
+          <input type="radio" name="ticket" value="280a500k">
+          De R$ 280 mil a R$ 500 mil
+        </label>
+        <label class="opt-label">
+          <input type="radio" name="ticket" value="500a800k">
+          De R$ 500 mil a R$ 800 mil
+        </label>
+        <label class="opt-label">
+          <input type="radio" name="ticket" value="acima800k">
+          Acima de R$ 800 mil
+        </label>
+      </div>
+      <div class="answered-summary" id="ans4"></div>
+      <button type="button" class="btn-next" onclick="nextQ(4)" disabled>Próxima →</button>
+    </div>
+
+    <!-- Q5: HORIZONTE -->
+    <div class="q-card" id="q5" data-q="5">
+      <div class="q-step">Pergunta 5 de 5</div>
+      <div class="q-label">Qual é o seu horizonte para compra de imóvel?</div>
+      <div class="options-list">
+        <label class="opt-label">
+          <input type="radio" name="horizonte" value="ate6meses">
+          Nos próximos 6 meses
+        </label>
+        <label class="opt-label">
+          <input type="radio" name="horizonte" value="6a12meses">
+          De 6 meses a 1 ano
+        </label>
+        <label class="opt-label">
+          <input type="radio" name="horizonte" value="1a2anos">
+          De 1 a 2 anos
+        </label>
+        <label class="opt-label">
+          <input type="radio" name="horizonte" value="so_pesquisando">
+          Só estou pesquisando por enquanto
+        </label>
+      </div>
+      <div class="answered-summary" id="ans5"></div>
+      <button type="button" class="btn-next" onclick="nextQ(5)" disabled>Próxima →</button>
+    </div>
+
+    <!-- Q6: CONTATO (opcional) -->
+    <div class="q-card" id="q6" data-q="6">
+      <div class="q-step">Opcional</div>
+      <div class="q-label">
+        Quer receber informações antes de todo mundo?
+        <span class="optional-tag">— sem obrigação</span>
+      </div>
+      <input type="text" name="contato" class="text-input" placeholder="Nome e WhatsApp (ex: Ana · 11 9xxxx-xxxx)">
+      <div class="answered-summary" id="ans6"></div>
+      <button type="button" class="btn-next" onclick="nextQ(6)">Continuar →</button>
+      <span class="btn-skip" onclick="skipQ(6)">Pular esta etapa</span>
+    </div>
+
+  </form>
+</div>
+
+<!-- SUBMIT -->
+<div class="submit-section" id="submit-section">
+  <div class="submit-note">Suas respostas são anônimas e serão usadas apenas para orientar o projeto.</div>
+  <button type="button" class="btn-submit" id="btn-submit" onclick="submitForm()">Enviar respostas</button>
+  <div class="error-msg" id="error-msg">Ocorreu um erro. Tente novamente.</div>
+</div>
+
+<!-- OBRIGADO -->
+<div class="thankyou" id="thankyou">
+  <div class="thankyou-icon">✓</div>
+  <h3>Obrigado pela participação.</h3>
+  <p>Suas respostas vão orientar diretamente o que construiremos na sua região. Em breve, novidades sobre o AURA Tremembé.</p>
+</div>
+
+<div class="page-footer">© AURA DiMob · auradimob.com.br</div>
+
+<script>
+const totalQ = 5;
+let currentQ = 1;
+
+function updateProgress(q) {
+  const pct = Math.round(((q - 1) / totalQ) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-pct').textContent = pct + '%';
+  if (q <= totalQ) {
+    document.getElementById('prog-label').textContent = 'Pergunta ' + q + ' de ' + totalQ;
+  } else {
+    document.getElementById('prog-label').textContent = 'Quase lá!';
+    document.getElementById('prog-fill').style.width = '100%';
+    document.getElementById('prog-pct').textContent = '100%';
+  }
+}
+
+function enableNext(qNum) {
+  const card = document.getElementById('q' + qNum);
+  if (!card) return;
+  const btn = card.querySelector('.btn-next');
+  if (btn) btn.disabled = false;
+}
+
+document.querySelectorAll('input[type="radio"]').forEach(radio => {
+  radio.addEventListener('change', function() {
+    const card = this.closest('.q-card');
+    const qNum = parseInt(card.dataset.q);
+    enableNext(qNum);
+  });
+});
+
+const labels = {
+  perfil: { comprador_moradia: 'Comprar para morar', investidor: 'Investimento', pesquisando: 'Ainda pesquisando' },
+  zona_norte: { tremembe_jacana_horto: 'Tremembé / Jaçanã / Horto', tucuruvi_vmazzei: 'Tucuruvi / V. Mazzei', santana_carandiru: 'Santana / Carandiru', outra_zn: 'Outra ZN', fora_zn: 'Fora da ZN' },
+  produto_preferencia: { sobrado_condominio: 'Sobrado / casa', studio_compacto: 'Apto compacto com terraço', preco_decide: 'Depende do preço', sem_interesse: 'Sem interesse' },
+  ticket: { ate280k: 'Até R$280k', '280a500k': 'R$280k–500k', '500a800k': 'R$500k–800k', acima800k: 'Acima de R$800k' },
+  horizonte: { ate6meses: 'Até 6 meses', '6a12meses': '6–12 meses', '1a2anos': '1–2 anos', so_pesquisando: 'Só pesquisando' }
+};
+
+const fieldNames = ['perfil', 'zona_norte', 'produto_preferencia', 'ticket', 'horizonte'];
+
+function getSelectedLabel(qNum) {
+  const name = fieldNames[qNum - 1];
+  const sel = document.querySelector('input[name="' + name + '"]:checked');
+  if (!sel) return null;
+  return (labels[name] && labels[name][sel.value]) ? labels[name][sel.value] : sel.value;
+}
+
+function nextQ(qNum) {
+  if (qNum <= totalQ) {
+    const lbl = getSelectedLabel(qNum);
+    if (!lbl) return;
+    const ansEl = document.getElementById('ans' + qNum);
+    if (ansEl) ansEl.textContent = '✓ ' + lbl;
+    document.getElementById('q' + qNum).classList.add('answered');
+  }
+
+  const next = qNum + 1;
+  currentQ = next;
+
+  if (next === 6) {
+    const q6 = document.getElementById('q6');
+    if (q6) q6.classList.add('visible');
+    updateProgress(6);
+    setTimeout(() => q6 && q6.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+  } else if (next > 6) {
+    document.getElementById('submit-section').classList.add('visible');
+    updateProgress(6);
+    setTimeout(() => document.getElementById('submit-section').scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+  } else {
+    const nextCard = document.getElementById('q' + next);
+    if (nextCard) {
+      nextCard.classList.add('visible');
+      updateProgress(next);
+      setTimeout(() => nextCard.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+    }
+  }
+}
+
+function skipQ(qNum) {
+  document.getElementById('q' + qNum).classList.add('answered');
+  const ansEl = document.getElementById('ans' + qNum);
+  if (ansEl) { ansEl.textContent = '— Pulado'; ansEl.style.color = '#6a6560'; }
+  document.getElementById('submit-section').classList.add('visible');
+  updateProgress(6);
+  setTimeout(() => document.getElementById('submit-section').scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+}
+
+async function submitForm() {
+  const btn = document.getElementById('btn-submit');
+  const errMsg = document.getElementById('error-msg');
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+  errMsg.style.display = 'none';
+
+  const form = document.getElementById('pesquisa-form');
+  const data = new FormData(form);
+
+  try {
+    const res = await fetch(form.action, {
+      method: 'POST',
+      body: data,
+      headers: { 'Accept': 'application/json' }
+    });
+    if (res.ok) {
+      document.querySelector('.progress-wrap').style.display = 'none';
+      document.querySelector('.form-wrap').style.display = 'none';
+      document.getElementById('submit-section').style.display = 'none';
+      document.getElementById('thankyou').classList.add('visible');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      throw new Error('server error');
+    }
+  } catch (e) {
+    btn.disabled = false;
+    btn.textContent = 'Enviar respostas';
+    errMsg.style.display = 'block';
+  }
+}
+</script>
+</body>
+</html>
